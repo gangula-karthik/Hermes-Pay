@@ -30,6 +30,7 @@ import {
   UserX2Icon,
   X
 } from 'lucide-react';
+import { FcGoogle } from "react-icons/fc";
 
 export type Icon = LucideIcon;
 
@@ -77,6 +78,7 @@ export const Icons = {
       ></path>
     </svg>
   ),
+  google: FcGoogle,
   twitter: Twitter,
   check: Check
 };
