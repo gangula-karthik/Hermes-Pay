@@ -1,7 +1,6 @@
 import unittest
 import json
 from app import app  # Import your Flask app
-
 class FlaskTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -11,7 +10,7 @@ class FlaskTestCase(unittest.TestCase):
 
     def test_delete_success(self):
         # Define the ID of the item to delete (ensure this ID exists in your database)
-        item_id = 11
+        item_id = 13
         
         # Make a DELETE request to the delete endpoint
         response = self.app.delete(f'/supabase/delete/{item_id}')
