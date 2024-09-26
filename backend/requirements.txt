@@ -33,8 +33,6 @@ funcsigs==1.0.2
 gitdb==4.0.9
 GitPython==3.1.27
 gotrue==0.5.0
-grpcio==1.66.1
-grpcio-status==1.66.1
 h11==0.12.0
 httpcore==0.14.7
 httpx==0.21.3
@@ -72,7 +70,7 @@ pillow==10.4.0
 pkginfo==1.8.3
 postgrest-py==0.10.2
 proto-plus==1.24.0
-protobuf==5.26.1
+protobuf==3.19.0
 prox==0.0.17
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
