@@ -32,10 +32,6 @@ fsspec==2024.9.0
 funcsigs==1.0.2
 gitdb==4.0.9
 GitPython==3.1.27
-google-api-core==2.20.0
-google-auth==2.35.0
-google-cloud-vision==3.7.4
-googleapis-common-protos==1.65.0
 gotrue==0.5.0
 grpcio==1.66.1
 grpcio-status==1.66.1
@@ -76,7 +72,7 @@ pillow==10.4.0
 pkginfo==1.8.3
 postgrest-py==0.10.2
 proto-plus==1.24.0
-protobuf==3.20.0
+protobuf==5.26.1
 prox==0.0.17
 pyasn1==0.6.1
 pyasn1_modules==0.4.1
