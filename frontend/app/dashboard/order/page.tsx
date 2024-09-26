@@ -42,7 +42,7 @@ export default function Page() {
               behavior: "smooth",
             });
           }}
-        >
+        >you
           Scroll to Results
         </Button>
       </div>
