@@ -4,8 +4,8 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { DocumentScannerCameraComponent } from '@/components/document-scanner-camera';
-import { useRef } from 'react';
-import {Button, ButtonGroup} from "@nextui-org/button";
+import { useRef, useState } from 'react';
+import FoodCard from '@/components/FoodCard';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -13,7 +13,8 @@ const breadcrumbItems = [
 ];
 
 export default function Page() {
-  const resultSectionRef = useRef<HTMLDivElement>(null); // Reference to the result section
+  const resultSectionRef = useRef<HTMLDivElement>(null);
+  const [foodItems, setFoodItems] = useState<any[]>([]); // Initially empty array for food items
 
   const scrollToResults = () => {
     if (resultSectionRef.current) {
@@ -29,26 +30,16 @@ export default function Page() {
         <div className="flex items-start justify-between">
           <Heading title={`Order Now`} description="Manage tasks by drag and drop" />
         </div>
-        {/* Pass the scroll function as a prop */}
-        <DocumentScannerCameraComponent onSuccess={scrollToResults} />
-        {/* Scroll down to the result section when button is clicked */}
-        <Button
-          color="primary"
-          variant="ghost"
-          size="md"
-          className="mt-4"
-          onClick={() => {
-            document.getElementById("resultSection")?.scrollIntoView({
-              behavior: "smooth",
-            });
-          }}
-        >you
-          Scroll to Results
-        </Button>
+        {/* Pass the scroll function and setFoodItems to DocumentScannerCameraComponent */}
+        <DocumentScannerCameraComponent onSuccess={scrollToResults} setFoodItems={setFoodItems} />
       </div>
       {/* Result section to scroll to */}
-      <div ref={resultSectionRef} id="resultSection" className="mt-6">
-        <p>Results will be displayed here after successful upload...</p>
+      <div ref={resultSectionRef} id="resultSection" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+        {foodItems.map((foodItem) => (
+          <div key={foodItem.name} className="w-full">
+            <FoodCard foodItem={foodItem} />
+          </div>
+        ))}
       </div>
     </PageContainer>
   );

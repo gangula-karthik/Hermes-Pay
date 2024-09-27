@@ -1,14 +1,11 @@
-"use client"
-
 import React, { useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
-// import { Button } from "@/components/ui/button";
-import {Button, ButtonGroup} from "@nextui-org/button";
+import { Button } from "@nextui-org/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CameraIcon, UploadIcon, RefreshCwIcon } from 'lucide-react';
-import Image from 'next/image'; // Added import for Image
+import Image from 'next/image';
 
-export function DocumentScannerCameraComponent({ onSuccess }: { onSuccess: () => void }) {
+export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { onSuccess: () => void, setFoodItems: (items: any) => void }) {
   const webcamRef = useRef<Webcam>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
@@ -30,7 +27,7 @@ export function DocumentScannerCameraComponent({ onSuccess }: { onSuccess: () =>
     setIsSending(true);
 
     try {
-      const response = await fetch('/api/upload_img', {
+      const response = await fetch('http://localhost:5000/mock/ocr', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -41,7 +38,8 @@ export function DocumentScannerCameraComponent({ onSuccess }: { onSuccess: () =>
       });
 
       if (response.ok) {
-        alert('Document uploaded successfully!');
+        const data = await response.json(); // Get the OCR result as a JSON object
+        setFoodItems(data); // Update the food items in the parent component
         onSuccess(); // Trigger the scroll to results section
         retake();
       } else {
@@ -55,17 +53,17 @@ export function DocumentScannerCameraComponent({ onSuccess }: { onSuccess: () =>
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto"> {/* Increased size to max-w-lg */}
-      <CardContent className="p-6"> {/* Slightly larger padding */}
+    <Card className="w-full max-w-lg mx-auto">
+      <CardContent className="p-6">
         {capturedImage ? (
           <div className="space-y-4">
-            <Image 
-              src={capturedImage} 
-              alt="Captured document" 
-              className="w-full rounded-lg" 
-              layout="responsive" 
-              width={800} // Specify the width
-              height={600} // Specify the height
+            <Image
+              src={capturedImage}
+              alt="Captured document"
+              className="w-full rounded-lg"
+              layout="responsive"
+              width={800}
+              height={600}
             />
             <div className="flex justify-between">
               <Button color="danger" onClick={retake}>

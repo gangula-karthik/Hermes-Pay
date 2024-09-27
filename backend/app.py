@@ -68,6 +68,8 @@ def delete(item_id):
     supabase_delete(item_id)
 
 
+
+
 @app.route('/supabase/calculate-area/<buildingId>')
 def calculateArea(buildingId):
     data = request.json
