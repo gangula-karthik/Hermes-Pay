@@ -116,6 +116,38 @@ def ocr_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/calculate-total', methods=['POST'])
+def calculate_total():
+    try:
+        # Parse the incoming JSON data
+        json_data = request.get_json()
+        
+        # Extract item names and prices
+        item_names = list(json_data.keys())
+        total_price = round(sum(json_data.values()),2)
+
+        
+        # Create a string of item names
+        items_string = ", ".join(item_names)
+        
+        # Prepare the response
+        response = {
+            "items": items_string,
+            "total_price": total_price
+        }
+        
+        return jsonify(response), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+    
+### expected data given 
+#     {"Bello Burger": 10.90,
+#     "All-Star Plate": 12.50,
+#     "Wayside Waffle": 8.90,
+#     "Farmer's Plate": 21.90}
+
+
 
 # Only run the app if this script is executed directly
 if __name__ == '__main__':
