@@ -28,11 +28,11 @@ const FoodCard: React.FC<FoodCardProps> = ({ foodItem }) => {
     >
       <div className="w-full flex flex-row sm:flex-col">
         {/* Food image */}
-        <div className="w-1/3 sm:w-full aspect-square sm:aspect-[4/3] overflow-hidden">
+        <div className="w-1/3 sm:w-full aspect-square sm:aspect-[4/3] overflow-hidden flex items-center justify-center">
           <Image
             src={foodItem.image}
             alt={`Image of ${foodItem.name}`}
-            className="w-full h-full object-cover"
+            className="object-cover w-full h-full"
           />
         </div>
 

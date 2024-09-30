@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Button } from "@nextui-org/button";
+import { Spinner } from "@nextui-org/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { CameraIcon, UploadIcon, RefreshCwIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -9,6 +10,8 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
   const webcamRef = useRef<Webcam>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isCameraReady, setIsCameraReady] = useState(false); // New state to track camera readiness
+  const [loadingCamera, setLoadingCamera] = useState(true); // State to manage the spinner
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -52,6 +55,11 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
     }
   };
 
+  const handleCameraReady = () => {
+    setIsCameraReady(true);
+    setLoadingCamera(false); // Stop the spinner when the camera is ready
+  };
+
   return (
     <Card className="w-full max-w-lg mx-auto">
       <CardContent className="p-6">
@@ -78,6 +86,11 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
           </div>
         ) : (
           <div className="space-y-4">
+            {loadingCamera && (
+              <div className="flex justify-center items-center">
+                <Spinner size="lg" />
+              </div>
+            )}
             <Webcam
               audio={false}
               ref={webcamRef}
@@ -85,10 +98,17 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
               videoConstraints={{
                 facingMode: "environment"
               }}
-              className="w-full rounded-lg"
+              onUserMedia={handleCameraReady} // This fires when the camera is ready
+              className={`w-full rounded-lg ${loadingCamera ? 'hidden' : ''}`} // Hide the webcam until it's ready
             />
-            <Button color="primary" onClick={capture} className="w-full">
-              <CameraIcon className="w-4 h-4 mr-2" />
+            <Button
+              color="primary"
+              onClick={capture}
+              className="w-full"
+              disabled={!isCameraReady} // Disable the button until the camera is ready
+              isLoading={loadingCamera} // Set isLoading on the button while the camera is getting ready
+            >
+              {loadingCamera ? '' : <CameraIcon className="w-4 h-4 mr-2" />}
               Capture Document
             </Button>
           </div>
