@@ -80,7 +80,7 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
               </Button>
               <Button color="success" onClick={sendToBackend} isLoading={isSending}>
                 {isSending ? '' : <UploadIcon className="w-4 h-4 mr-2" />}
-                Send to Backend
+                Upload
               </Button>
             </div>
           </div>

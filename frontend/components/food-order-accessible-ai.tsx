@@ -22,6 +22,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Volume2 } from "lucide-react"  // Changed from VolumeUp to Volume2
 
 // Mock order data
 const orderDetails = [
@@ -33,7 +34,10 @@ const orderDetails = [
 
 const totalPrice = orderDetails.reduce((sum, item) => sum + item.price, 0).toFixed(2)
 
-export function FoodOrderAccessible() {
+// Mock AI recommendation
+const aiRecommendation = "Great choice! Your meal is balanced with protein from the burger, carbs from the fries, and vitamins from the salad. Consider adding a fruit dessert for extra nutrition!"
+
+export function FoodOrderAccessibleAi() {
   const [isOpen, setIsOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -46,28 +50,46 @@ export function FoodOrderAccessible() {
     return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
 
+  const speakRecommendation = () => {
+    const utterance = new SpeechSynthesisUtterance(aiRecommendation)
+    speechSynthesis.speak(utterance)
+  }
+
   const OrderContent = () => (
     <>
       <div className="text-center mb-6">
-        <div className="text-4xl font-bold mb-2">Total Price</div>
-        <div className="text-6xl font-extrabold text-primary" aria-live="polite">
+        <div className="text-3xl font-bold mb-2">Total Price</div>
+        <div className="text-5xl font-extrabold text-primary" aria-live="polite">
           ${totalPrice}
         </div>
       </div>
-      <ScrollArea className="flex-1 px-4">
+      <ScrollArea className="flex-1 px-4 overflow-auto">
         <div className="space-y-4">
-          <h3 className="text-2xl font-semibold text-center">Order Details</h3>
+          <h3 className="text-xl font-semibold text-center">Order Details</h3>
           {orderDetails.map((item, index) => (
-            <div key={index} className="flex justify-between text-xl">
+            <div key={index} className="flex justify-between text-lg">
               <span>{item.item}</span>
               <span>${item.price.toFixed(2)}</span>
             </div>
           ))}
         </div>
       </ScrollArea>
+      <div className="mt-6 p-4 bg-secondary rounded-lg">
+        <h4 className="text-lg font-semibold mb-1">AI Rec 🤖</h4>
+        <p className="text-md mb-1">{aiRecommendation}</p>
+        <Button 
+          onClick={speakRecommendation} 
+          variant="bordered" 
+          className="w-full"
+          size="sm"
+        >
+          <Volume2 className="mr-1 h-4 w-4" />
+          Read
+        </Button>
+      </div>
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <Button size="lg" className="text-xl py-6">Pay Now 📱</Button>
-        <Button size="lg" variant="bordered" className="text-xl py-6">Cash Pay 💵</Button>
+        <Button color="primary">Pay Now 📱</Button>
+        <Button color="secondary">Cash Pay 💵</Button>
       </div>
     </>
   )
@@ -76,19 +98,15 @@ export function FoodOrderAccessible() {
     return (
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
-          <Button color="primary" variant="solid" className="w-full sm:w-auto mt-6">View Order</Button>
+          <Button variant="bordered" >View Order</Button>
         </DrawerTrigger>
         <DrawerContent>
-          <DrawerHeader className="text-center">
-            <DrawerTitle className="text-3xl">Your Order</DrawerTitle>
-            <DrawerDescription className="text-xl">Review your order details below</DrawerDescription>
-          </DrawerHeader>
-          <div className="px-4 py-6">
+          <div className="px-4 py-2">
             <OrderContent />
           </div>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button color="danger" variant="flat" size="lg" className="text-xl py-6">Close</Button>
+              <Button variant="flat" color="danger">Close</Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>
@@ -99,18 +117,14 @@ export function FoodOrderAccessible() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button color="primary" variant="solid" className="w-full sm:w-auto mt-6">View Order</Button>
+        <Button variant="bordered">View Order</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
-        <DialogHeader>
-          <DialogTitle className="text-3xl text-center">Your Order</DialogTitle>
-          <DialogDescription className="text-xl text-center">Review your order details below</DialogDescription>
-        </DialogHeader>
-        <div className="py-6">
+      <DialogContent className="sm:max-w-[400px]">
+        <div className="py-2">
           <OrderContent />
         </div>
         <DialogFooter>
-          <Button variant="flat" color="danger" size="lg" className="text-xl py-6" onClick={() => setIsOpen(false)}>Close</Button>
+          <Button onClick={() => setIsOpen(false)} variant="flat" color="danger">Close</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
