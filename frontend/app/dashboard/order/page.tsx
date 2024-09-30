@@ -7,6 +7,7 @@ import { DocumentScannerCameraComponent } from '@/components/document-scanner-ca
 import { useRef, useState } from 'react';
 import { Button } from "@nextui-org/button";
 import FoodCard from '@/components/FoodCard';
+import { FoodOrderAccessible } from '@/components/food-order-accessible';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -42,7 +43,8 @@ export default function Page() {
           </div>
         ))}
       </div>
-      {foodItems.length > 0 && <div className="flex justify-end mt-4"><Button>Pay Now</Button></div>}
+      {foodItems.length > 0 && <div className="flex justify-end mt-4"><Button className="w-full sm:w-auto mt-6" color="primary">Pay Now</Button></div>}
+      <FoodOrderAccessible/>
     </PageContainer>
   );
 }
