@@ -7,6 +7,7 @@ import os
 import re
 from werkzeug.utils import secure_filename
 from ocr import dynamic_parse_menu
+from functions import *
 load_dotenv()
 
 app = Flask(__name__)
@@ -46,26 +47,51 @@ def login():
         print(f"Error: {e}")
         return str(e), 400  # Return the error message and a 400 status code
 
+#Create a new transaction
+@app.route('/transactions', methods=['POST'])
+def create_transaction_route():
+    data = request.get_json()  # Get JSON payload from the request
+    email = data.get('email')
+    order = data.get('order')
+    if not email or not order:
+        return jsonify({"error": "Missing email or order"}), 400
+    response = create_transaction(email, order)
+    return response
 
-@app.route('/supabase/insert', methods=['POST'])
-def insert():
-    supabase_add()
+# Get all transactions
+@app.route('/transactions', methods=['GET'])
+def get_all_transactions_route():
+    response = get_all_transactions()  # Call the function to get transactions
+
+    return response  # The function already returns a JSON response
+
+# Get a specific transaction by ID
+@app.route('/transactions/<int:transaction_id>', methods=['GET'])
+def get_transaction_by_id_route(transaction_id):
+    response = get_transaction_by_id(transaction_id)  # This returns a tuple (response, status_code)
+    return response  # Return the response directly
 
 
+#Update a transaction by ID
+@app.route('/transactions/<int:transaction_id>', methods=['PUT'])
+def update_transaction_route(transaction_id):
+    data = request.get_json()
+    updated_order = data.get('order')  # updated order should be a JSON object
 
-@app.route('/supabase/select', methods=['GET'])
-def select():
-    supabase_select_all()
+    response = update_transaction(transaction_id, updated_order)
+    
+    if response.error:
+        return jsonify({"error": response.error}), 400
+    return jsonify(response.data), 200
 
-
-@app.route('/supabase/update/<item_id>', methods=['PUT'])
-def update(item_id):
-    supabase_update(item_id)
-
-
-@app.route('/supabase/delete/<int:item_id>', methods=['DELETE'])
-def delete(item_id):
-    supabase_delete(item_id)
+#Delete a transaction by ID
+@app.route('/transactions/<int:transaction_id>', methods=['DELETE'])
+def delete_transaction_route(transaction_id):
+    response = delete_transaction(transaction_id)
+    
+    if response.error:
+        return jsonify({"error": response.error}), 400
+    return jsonify({"message": "Transaction deleted successfully"}), 200
 
 
 
