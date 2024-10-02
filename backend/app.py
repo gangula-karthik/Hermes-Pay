@@ -146,7 +146,7 @@ def ocr_route():
 
 @app.route('/recommendation', methods=['POST'])
 def recommendation():
-    ai_reco()
+    return ai_reco()
 
 
 

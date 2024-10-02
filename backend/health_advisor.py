@@ -4,10 +4,11 @@ import ollama
 app = Flask(__name__)
 
 # Initialize Ollama model with 'phi3.5:3.8b-mini-instruct-q6_K'
-ollama_model = "phi3.5:3.8b-mini-instruct-q6_K"
 
-@app.route('/calculate-total', methods=['POST'])
+
+# @app.route('/calculate-total', methods=['POST'])
 def ai_reco():
+    ollama_model = "phi3.5:3.8b-mini-instruct-q6_K"
     try:
         # Parse the incoming JSON data
         json_data = request.get_json()
@@ -23,9 +24,10 @@ def ai_reco():
         # Analyze the item names using Ollama phi3.5
         analysis_input = (
             f"Analyze the following items: {items_string}, "
-            f"answer in less than 50 tokens. Imagine you are a caring health advisor. "
+            f"Imagine you are a caring health advisor. "
             f"My budget for the day is {budget}. I'm spending this much on a meal: {total_price}. "
             f"Is this reasonable to get this amount of food for 1 person?"
+            f"Answer in less than 50 tokens. "
         )
 
         print('Before chat')
@@ -48,5 +50,5 @@ def ai_reco():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
