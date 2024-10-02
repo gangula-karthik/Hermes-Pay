@@ -18,7 +18,8 @@ supabase: Client = create_client(SUPABASE_PROJECT_URL, SUPABASE_API_KEY)
 
 @app.route('/')
 def default():
-    return "Hello World"
+    return "Hello World 123"
+
 
 @app.route('/supabase/create-account', methods=['POST'])
 def create_account():
@@ -143,7 +144,7 @@ def ocr_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/calculate-total', methods=['POST'])
+@app.route('/recommendation', methods=['POST'])
 def recommendation():
     ai_reco()
 
