@@ -7,7 +7,7 @@ app = Flask(__name__)
 ollama_model = "phi3.5:3.8b-mini-instruct-q6_K"
 
 @app.route('/calculate-total', methods=['POST'])
-def calculate_total():
+def ai_reco():
     try:
         # Parse the incoming JSON data
         json_data = request.get_json()
