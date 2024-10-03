@@ -1,18 +1,29 @@
+"use client";
+
+import React from "react";
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import PageContainer from '@/components/layout/page-container';
-import { UserClient } from '@/components/tables/user-tables/client';
-import { users } from '@/constants/data';
+import { Heading } from '@/components/ui/heading';
+import { FamilyManager } from '@/components/family-manager'
 
+
+// Breadcrumb data
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
-  { title: 'User', link: '/dashboard/user' }
+  { title: 'PWID User Management', link: '/dashboard/user' }
 ];
-export default function page() {
+
+export default function Page() {
   return (
     <PageContainer>
-      <div className="space-y-2">
+      <div className="space-y-8">
         <Breadcrumbs items={breadcrumbItems} />
-        <UserClient data={users} />
+        <div className="flex items-start justify-between space-x-4">
+          <Heading title="PWID User Management" description="Manage different users in your family" />
+        </div>
+        <div className="mt-8">
+          <FamilyManager/>
+        </div>
       </div>
     </PageContainer>
   );
