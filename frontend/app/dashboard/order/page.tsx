@@ -5,7 +5,6 @@ import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
 import { DocumentScannerCameraComponent } from '@/components/document-scanner-camera';
 import { useRef, useState } from 'react';
-import { Button } from "@nextui-org/button";
 import FoodCard from '@/components/FoodCard';
 import { FoodOrderAccessibleAi } from '@/components/food-order-accessible-ai';
 
@@ -14,14 +13,28 @@ const breadcrumbItems = [
   { title: 'Order', link: '/dashboard/order' },
 ];
 
+type FoodItem = {
+  name: string;
+  image: string;
+  price: string;
+};
+
 export default function Page() {
   const resultSectionRef = useRef<HTMLDivElement>(null);
-  const [foodItems, setFoodItems] = useState<any[]>([]); // Initially empty array for food items
+  const [foodItems, setFoodItems] = useState<FoodItem[]>([]);
+  const [selectedItems, setSelectedItems] = useState<FoodItem[]>([]);
 
   const scrollToResults = () => {
     if (resultSectionRef.current) {
-      // Scroll to the results section smoothly
       resultSectionRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleFoodItemSelection = (item: FoodItem, isSelected: boolean) => {
+    if (isSelected) {
+      setSelectedItems(prev => [...prev, item]);
+    } else {
+      setSelectedItems(prev => prev.filter(i => i.name !== item.name));
     }
   };
 
@@ -32,19 +45,17 @@ export default function Page() {
         <div className="flex items-start justify-between">
           <Heading title={`Order Now`} description="Quick and Seamless Ordering" />
         </div>
-        {/* Pass the scroll function and setFoodItems to DocumentScannerCameraComponent */}
         <DocumentScannerCameraComponent onSuccess={scrollToResults} setFoodItems={setFoodItems} />
       </div>
-      {/* Result section to scroll to */}
       <div ref={resultSectionRef} id="resultSection" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-20 justify-items-center">
-        {foodItems.map((foodItem) => (
-          <div key={foodItem.name} className="mt-3 w-full flex justify-center">
-            <FoodCard foodItem={foodItem} />
+        {foodItems.map((foodItem, index) => (
+          <div key={index} className="mt-3 w-full flex justify-center">
+            <FoodCard foodItem={foodItem} onSelect={handleFoodItemSelection} />
           </div>
         ))}
       </div>
       <div className="flex flex-col items-end mt-4">
-        {foodItems.length > 0 && <FoodOrderAccessibleAi/>}
+        {selectedItems.length > 0 && <FoodOrderAccessibleAi foodOrder={selectedItems} />}
       </div>
     </PageContainer>
   );

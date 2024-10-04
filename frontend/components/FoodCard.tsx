@@ -9,10 +9,16 @@ type FoodItem = {
 
 type FoodCardProps = {
   foodItem: FoodItem;
+  onSelect: (item: FoodItem, isSelected: boolean) => void;
 };
 
-const FoodCard: React.FC<FoodCardProps> = ({ foodItem }) => {
+const FoodCard: React.FC<FoodCardProps> = ({ foodItem, onSelect }) => {
   const [isSelected, setIsSelected] = React.useState(false);
+
+  const handleSelection = (selected: boolean) => {
+    setIsSelected(selected);
+    onSelect(foodItem, selected);
+  };
 
   return (
     <Checkbox
@@ -24,7 +30,7 @@ const FoodCard: React.FC<FoodCardProps> = ({ foodItem }) => {
         isSelected ? "border-primary" : "border-gray-200 dark:border-gray-600"
       )}
       isSelected={isSelected}
-      onValueChange={setIsSelected}
+      onValueChange={handleSelection}
     >
       <div className="w-full flex flex-row sm:flex-col">
         {/* Food image */}

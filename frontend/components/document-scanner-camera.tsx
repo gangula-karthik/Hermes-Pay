@@ -30,7 +30,7 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
     setIsSending(true);
 
     try {
-      const response = await fetch('http://localhost:5000/mock/ocr', {
+      const response = await fetch(`http://localhost:5000/mock/ocr`, { // Use the BACKEND_HOST_URL from the .env file
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

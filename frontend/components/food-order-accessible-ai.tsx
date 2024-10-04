@@ -5,39 +5,30 @@ import { Button } from "@nextui-org/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Volume2 } from "lucide-react"  // Changed from VolumeUp to Volume2
+import { Volume2 } from "lucide-react"
 
-// Mock order data
-const orderDetails = [
-  { item: "Burger", price: 10.99 },
-  { item: "Fries", price: 3.99 },
-  { item: "Soda", price: 1.99 },
-  { item: "Salad", price: 7.99 },
-]
+type FoodItem = {
+  name: string;
+  image: string;
+  price: string;
+};
 
-const totalPrice = orderDetails.reduce((sum, item) => sum + item.price, 0).toFixed(2)
+type FoodOrderAccessibleAiProps = {
+  foodOrder: FoodItem[];
+};
 
-// Mock AI recommendation
-const aiRecommendation = "Great choice! Your meal is balanced with protein from the burger, carbs from the fries, and vitamins from the salad. Consider adding a fruit dessert for extra nutrition!"
-
-export function FoodOrderAccessibleAi() {
+export function FoodOrderAccessibleAi({ foodOrder }: FoodOrderAccessibleAiProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -49,6 +40,18 @@ export function FoodOrderAccessibleAi() {
     window.addEventListener('resize', checkIsMobile)
     return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
+
+  const totalPrice = foodOrder.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0).toFixed(2)
+
+  // Generate a simple AI recommendation based on the order
+  const generateAiRecommendation = () => {
+    const itemCount = foodOrder.length;
+    if (itemCount === 0) return "Your order is empty. How about adding some delicious items?";
+    if (itemCount === 1) return `Great start with the ${foodOrder[0].name}! Consider adding a side or drink to complete your meal.`;
+    return `Excellent choices! Your order of ${itemCount} items looks balanced. Enjoy your meal!`;
+  }
+
+  const aiRecommendation = generateAiRecommendation();
 
   const speakRecommendation = () => {
     const utterance = new SpeechSynthesisUtterance(aiRecommendation)
@@ -66,10 +69,10 @@ export function FoodOrderAccessibleAi() {
       <ScrollArea className="flex-1 px-4 overflow-auto">
         <div className="space-y-4">
           <h3 className="text-xl font-semibold text-center">Order Details</h3>
-          {orderDetails.map((item, index) => (
+          {foodOrder.map((item, index) => (
             <div key={index} className="flex justify-between text-lg">
-              <span>{item.item}</span>
-              <span>${item.price.toFixed(2)}</span>
+              <span>{item.name}</span>
+              <span>{item.price}</span>
             </div>
           ))}
         </div>
