@@ -63,6 +63,7 @@ export function FoodOrderAccessibleAi({
           "Access-Control-Allow-Origin": "*",
         },
         body: JSON.stringify({
+          totalPrice: totalPrice,
           foodOrder: foodOrder.map(({ image, ...rest }) => rest), // Removed image from foodOrder
           menu: menu.map(({ image, ...rest }) => rest), // Removed image from menu
         }),
