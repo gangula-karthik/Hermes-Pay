@@ -14,6 +14,12 @@ export const navItems: NavItem[] = [
     label: 'user'
   },
   {
+    title: 'Parental Controls',
+    href: '/dashboard/profile',
+    icon: 'shield',
+    label: 'parental controls'
+  },
+  {
     title: 'Login',
     href: '/',
     icon: 'login',
