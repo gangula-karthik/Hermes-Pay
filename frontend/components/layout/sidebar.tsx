@@ -1,11 +1,14 @@
 'use client';
-import React, { useState } from 'react';
+import React from 'react';
 import { DashboardNav } from '@/components/dashboard-nav';
-import { navItems } from '@/constants/data';
+import { navItems, PwidNavItems } from '@/constants/data';
 import { cn } from '@/lib/utils';
 import { ChevronLeft } from 'lucide-react';
 import { useSidebar } from '@/hooks/useSidebar';
 import Link from 'next/link';
+import { GiLibertyWing } from "react-icons/gi";
+import { Bird } from 'lucide-react';
+import { signOut, useSession } from 'next-auth/react';
 
 type SidebarProps = {
   className?: string;
@@ -13,10 +16,15 @@ type SidebarProps = {
 
 export default function Sidebar({ className }: SidebarProps) {
   const { isMinimized, toggle } = useSidebar();
+  const { data: session } = useSession();
+
+  if (!session) return null; // Only render the sidebar if there is a session
 
   const handleToggle = () => {
     toggle();
   };
+
+  const navItemsToDisplay = session.user?.email === 'demo@gmail.com' ? PwidNavItems : navItems;
 
   return (
     <aside
@@ -28,21 +36,11 @@ export default function Sidebar({ className }: SidebarProps) {
     >
       <div className="hidden p-5 pt-10 lg:block">
         <Link
-          href={'https://github.com/Kiranism/next-shadcn-dashboard-starter'}
+          href={'https://github.com/gangula-karthik/Ideatecomm'}
           target="_blank"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-6 w-6"
-          >
-            <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
-          </svg>
+          {/* <GiLibertyWing className="text-4xl" /> */}
+          <Bird className="text-4xl"/>
         </Link>
       </div>
       <ChevronLeft
@@ -55,7 +53,7 @@ export default function Sidebar({ className }: SidebarProps) {
       <div className="space-y-4 py-4">
         <div className="px-3 py-2">
           <div className="mt-3 space-y-1">
-            <DashboardNav items={navItems} />
+            <DashboardNav items={navItemsToDisplay} />
           </div>
         </div>
       </div>

@@ -1,9 +1,10 @@
 'use client';
 import { DashboardNav } from '@/components/dashboard-nav';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { navItems } from '@/constants/data';
+import { navItems, PwidNavItems } from '@/constants/data';
 import { MenuIcon } from 'lucide-react';
 import { useState } from 'react';
+import { signOut, useSession } from 'next-auth/react';
 
 // import { Playlist } from "../data/playlists";
 
@@ -13,6 +14,13 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function MobileSidebar({ className }: SidebarProps) {
   const [open, setOpen] = useState(false);
+  const { data: session } = useSession();
+
+  if (!session) return null; // Only render the sidebar if there is a session
+
+  const navItemsToDisplay = session.user?.email === 'demo@gmail.com' ? PwidNavItems : navItems;
+
+  
   return (
     <>
       <Sheet open={open} onOpenChange={setOpen}>
@@ -27,7 +35,7 @@ export function MobileSidebar({ className }: SidebarProps) {
               </h2>
               <div className="space-y-1">
                 <DashboardNav
-                  items={navItems}
+                  items={navItemsToDisplay}
                   isMobileNav={true}
                   setOpen={setOpen}
                 />
