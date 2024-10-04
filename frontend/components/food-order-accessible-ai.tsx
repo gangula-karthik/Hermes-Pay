@@ -73,7 +73,8 @@ export function FoodOrderAccessibleAi({
       }
 
       const data = await response.json();
-      setAiRecommendation(data.recommendation);
+      console.log(data); // Log the API output
+      setAiRecommendation(data.analysis);
     } catch (error) {
       setAiRecommendation(
         "We're having trouble generating a recommendation right now. Please wait for a few seconds."
