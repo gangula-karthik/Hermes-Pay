@@ -29,7 +29,8 @@ import {
   User2Icon,
   UserX2Icon,
   X,
-  Utensils
+  Utensils,
+  ShieldHalf
 } from 'lucide-react';
 import { FcGoogle } from "react-icons/fc";
 
@@ -82,5 +83,6 @@ export const Icons = {
   google: FcGoogle,
   twitter: Twitter,
   check: Check,
-  utensils: Utensils
+  utensils: Utensils,
+  shield: ShieldHalf
 };

@@ -29,7 +29,7 @@ export function ModernUserEditor() {
       email: 'demo@gmail.com',
       name: 'Demo User',
       dailyBudget: 50,
-      instructions: 'Default instructions for Demo User'
+      instructions: 'Limit number of sweet drinks and encourage healthier choices'
     }
   ])
 
