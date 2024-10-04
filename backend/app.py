@@ -3,12 +3,16 @@ from supabase import create_client, Client
 from flask import Flask, request, jsonify
 from paddleocr import PaddleOCR
 from dotenv import load_dotenv
-import os
+
 import re
 from werkzeug.utils import secure_filename
 from ocr import dynamic_parse_menu
 from functions import *
 from health_advisor import ai_reco
+import requests
+from io import BytesIO
+from PIL import Image
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -118,31 +122,47 @@ def calculateArea(buildingId):
 
 @app.route('/ocr', methods=['POST'])
 def ocr_route():
-    ocr = PaddleOCR(use_angle_cls=True, lang='en')
-    image_path = "./image/j_menu.jpg"  # Image path in your folder
-
-    # Check if the image exists
-    if not os.path.exists(image_path):
-        return jsonify({"error": "Image file not found"}), 400
-
     try:
-        # Perform OCR
-        result = ocr.ocr(image_path, cls=True)
+        model_dir = r'./model/ch_PP-OCRv3_det_infer/ch_PP-OCRv3_det_infer' 
+        structure_dir = r'./model/picodet_lcnet_x1_0_fgd_layout_infer/picodet_lcnet_x1_0_fgd_layout_infer'
+        # Instantiate PaddleOCR
+        ocr = PaddleOCR(use_angle_cls=True, det_model_dir=model_dir,structure_version=structure_dir)
 
-        # Flatten the result and extract text
+        # Get image URL from the request
+        data = request.json
+        image_url = data.get('image_url')
+
+        if not image_url:
+            return jsonify({"error": "Image URL is required"}), 400
+
+        # Download the image from the URL
+        response = requests.get(image_url)
+        img = Image.open(BytesIO(response.content))
+
+        # Save the image in its original format
+        image_format = img.format.lower()
+        img_path = f"./temp_image.{image_format}"  # Save with the correct extension
+        img.save(img_path)
+
+        # Perform OCR using PaddleOCR
+        result = ocr.ocr(img_path, cls=True)
+
+        # Extract text from the OCR result
         extracted_text = []
         for line in result:
             for word_info in line:
-                extracted_text.append(word_info[1][0])  # Get the text from the result
-
-        # Parse the extracted text
+                extracted_text.append(word_info[1][0])  # Get the recognized text
+        print(extracted_text)
+        # Parse the extracted text into structured menu
         structured_menu = dynamic_parse_menu(extracted_text)
-
-        # Return the structured data
+        
         return jsonify(structured_menu)
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+    #curl -X POST http://127.0.0.1:5000/ocr -H "Content-Type: application/json" -d "{\"image_url\": \"https://i0.wp.com/ordinarypatrons.com/wp-content/uploads/2022/07/Plain-Vanilla-East-Coast-Menu-2-1.jpg\"}"
+
 
 @app.route('/recommendation', methods=['POST'])
 def recommendation():
