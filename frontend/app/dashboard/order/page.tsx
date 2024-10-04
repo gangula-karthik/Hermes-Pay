@@ -55,7 +55,7 @@ export default function Page() {
         ))}
       </div>
       <div className="flex flex-col items-end mt-4">
-        {selectedItems.length > 0 && <FoodOrderAccessibleAi foodOrder={selectedItems} />}
+        {selectedItems.length > 0 && <FoodOrderAccessibleAi foodOrder={selectedItems} menu={foodItems} />}
       </div>
     </PageContainer>
   );

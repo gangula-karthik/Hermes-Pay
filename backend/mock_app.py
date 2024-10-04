@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
+import time
+import random
 
 
 app = Flask(__name__)
@@ -57,6 +59,19 @@ def mock_ocr_route():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+
+@app.route('/mock/recommendation', methods=['POST'])
+def generate_recommendation():
+    time.sleep(5)
+    
+    data = request.get_json()
+    print(data) 
+    
+    messages = ["You should try our special today!", "How about a healthy option?", "Feeling adventurous? Try something new!"]
+    print(messages)
+    return jsonify({"recommendation": random.choice(messages)}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)

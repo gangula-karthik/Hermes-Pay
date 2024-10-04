@@ -1,62 +1,99 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
+import { useState, useEffect } from "react";
 import { Button } from "@nextui-org/button";
 import {
   Dialog,
   DialogContent,
   DialogFooter,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerFooter,
   DrawerTrigger,
-} from "@/components/ui/drawer"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Volume2 } from "lucide-react"
+} from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Volume2, Loader2 } from "lucide-react";
 
 type FoodItem = {
   name: string;
   image: string;
-  price: string;
+  price: string; // Removed image from the type definition
 };
 
 type FoodOrderAccessibleAiProps = {
   foodOrder: FoodItem[];
+  menu: FoodItem[];
 };
 
-export function FoodOrderAccessibleAi({ foodOrder }: FoodOrderAccessibleAiProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+export function FoodOrderAccessibleAi({
+  foodOrder,
+  menu,
+}: FoodOrderAccessibleAiProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [aiRecommendation, setAiRecommendation] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPayLoading, setIsPayLoading] = useState(false);
 
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768)
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  const totalPrice = foodOrder
+    .reduce((sum, item) => sum + parseFloat(item.price.replace("$", "")), 0)
+    .toFixed(2);
+
+  const fetchRecommendation = async () => {
+    setIsPayLoading(true); // Start loading for "Pay" buttons
+
+    try {
+      const response = await fetch("http://127.0.0.1:5000/mock/recommendation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
+        body: JSON.stringify({
+          foodOrder: foodOrder.map(({ image, ...rest }) => rest), // Removed image from foodOrder
+          menu: menu.map(({ image, ...rest }) => rest), // Removed image from menu
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch recommendation");
+      }
+
+      const data = await response.json();
+      setAiRecommendation(data.recommendation);
+    } catch (error) {
+      setAiRecommendation(
+        "We're having trouble generating a recommendation right now. Please wait for a few seconds."
+      );
+    } finally {
+      setIsPayLoading(false); // Stop loading for "Pay" buttons after API completes
     }
-    checkIsMobile()
-    window.addEventListener('resize', checkIsMobile)
-    return () => window.removeEventListener('resize', checkIsMobile)
-  }, [])
+  };
 
-  const totalPrice = foodOrder.reduce((sum, item) => sum + parseFloat(item.price.replace('$', '')), 0).toFixed(2)
-
-  // Generate a simple AI recommendation based on the order
-  const generateAiRecommendation = () => {
-    const itemCount = foodOrder.length;
-    if (itemCount === 0) return "Your order is empty. How about adding some delicious items?";
-    if (itemCount === 1) return `Great start with the ${foodOrder[0].name}! Consider adding a side or drink to complete your meal.`;
-    return `Excellent choices! Your order of ${itemCount} items looks balanced. Enjoy your meal!`;
-  }
-
-  const aiRecommendation = generateAiRecommendation();
+  const handleViewOrder = async () => {
+    setIsLoading(true);
+    await fetchRecommendation();
+    setIsLoading(false);
+    setIsOpen(true); // Open the drawer/dialog after loading completes
+  };
 
   const speakRecommendation = () => {
-    const utterance = new SpeechSynthesisUtterance(aiRecommendation)
-    speechSynthesis.speak(utterance)
-  }
+    const utterance = new SpeechSynthesisUtterance(aiRecommendation);
+    speechSynthesis.speak(utterance);
+  };
 
   const OrderContent = () => (
     <>
@@ -80,9 +117,9 @@ export function FoodOrderAccessibleAi({ foodOrder }: FoodOrderAccessibleAiProps)
       <div className="mt-6 p-4 bg-secondary rounded-lg">
         <h4 className="text-lg font-semibold mb-1">AI Rec 🤖</h4>
         <p className="text-md mb-1">{aiRecommendation}</p>
-        <Button 
-          onClick={speakRecommendation} 
-          variant="bordered" 
+        <Button
+          onClick={speakRecommendation}
+          variant="bordered"
           className="w-full"
           size="sm"
         >
@@ -91,17 +128,27 @@ export function FoodOrderAccessibleAi({ foodOrder }: FoodOrderAccessibleAiProps)
         </Button>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <Button color="primary">Pay Now 📱</Button>
-        <Button color="secondary">Cash Pay 💵</Button>
+        <Button color="primary" isLoading={isPayLoading}>
+          Pay Now 📱
+        </Button>
+        <Button color="secondary" isLoading={isPayLoading}>
+          Cash Pay 💵
+        </Button>
       </div>
     </>
-  )
+  );
+
+  const ViewOrderButton = () => (
+    <Button variant="bordered" onClick={handleViewOrder} isLoading={isLoading}>
+        View Order
+    </Button>
+  );
 
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
         <DrawerTrigger asChild>
-          <Button variant="bordered" >View Order</Button>
+          <ViewOrderButton />
         </DrawerTrigger>
         <DrawerContent>
           <div className="px-4 py-2">
@@ -109,27 +156,31 @@ export function FoodOrderAccessibleAi({ foodOrder }: FoodOrderAccessibleAiProps)
           </div>
           <DrawerFooter>
             <DrawerClose asChild>
-              <Button variant="flat" color="danger">Close</Button>
+              <Button variant="flat" color="danger">
+                Close
+              </Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
-    )
+    );
   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="bordered">View Order</Button>
+        <ViewOrderButton />
       </DialogTrigger>
       <DialogContent className="sm:max-w-[400px]">
         <div className="py-2">
           <OrderContent />
         </div>
         <DialogFooter>
-          <Button onClick={() => setIsOpen(false)} variant="flat" color="danger">Close</Button>
+          <Button onClick={() => setIsOpen(false)} variant="flat" color="danger">
+            Close
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
