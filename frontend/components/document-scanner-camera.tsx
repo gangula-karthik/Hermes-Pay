@@ -30,10 +30,11 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
     setIsSending(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/mock/ocr`, { // Use the BACKEND_HOST_URL from the .env file
+      const response = await fetch(`https://4112-121-6-124-133.ngrok-free.app/ocr`, { // Use the BACKEND_HOST_URL from the .env file
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': '69420' // Added header to skip browser warning
         },
         body: JSON.stringify({
           image: capturedImage, // Send base64 image data

@@ -56,7 +56,7 @@ export function FoodOrderAccessibleAi({
     setIsPayLoading(true); // Start loading for "Pay" buttons
 
     try {
-      const response = await fetch("http://127.0.0.1:5000/mock/recommendation", {
+      const response = await fetch("https://4112-121-6-124-133.ngrok-free.app/recommendation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
