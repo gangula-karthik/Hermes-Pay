@@ -2,7 +2,7 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { CreateProfileOne } from '@/components/forms/user-profile-stepper/create-profile';
 import PageContainer from '@/components/layout/page-container';
 import { Heading } from '@/components/ui/heading';
-import UserEditor from '@/hooks/user-editor';
+import { ModernUserEditor } from '@/components/modern-user-editor';
 
 const breadcrumbItems = [
   { title: 'Dashboard', link: '/dashboard' },
@@ -16,7 +16,7 @@ export default function page() {
         <div className="flex items-start justify-between space-x-4">
           <Heading title="PWID Parental Controls" description="Set limits and rules on spending" />
         </div>
-      <UserEditor/>
+      <ModernUserEditor/>
       </div>
     </PageContainer>
   );

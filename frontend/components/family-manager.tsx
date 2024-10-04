@@ -17,7 +17,7 @@ type FamilyMember = {
 
 export function FamilyManager() {
   const [email, setEmail] = useState('')
-  const [family, setFamily] = useState<FamilyMember[]>([{ email: 'mrngjunming@gmail.com', verified: true }]) // Added default value
+  const [family, setFamily] = useState<FamilyMember[]>([{ email: 'demo@gmail.com', verified: true }]) // Added default value
   const [error, setError] = useState('')
 
   const isValidEmail = (email: string) => {
