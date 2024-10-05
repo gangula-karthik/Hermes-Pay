@@ -3,7 +3,8 @@ from supabase import create_client, Client
 from flask import Flask, request, jsonify
 from paddleocr import PaddleOCR
 from dotenv import load_dotenv
-
+import base64
+from flask_cors import CORS
 import re
 from werkzeug.utils import secure_filename
 from ocr import dynamic_parse_menu
@@ -16,6 +17,7 @@ from PIL import Image
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 SUPABASE_PROJECT_URL: str = os.getenv('SUPABASE_PROJECT_URL')
 SUPABASE_API_KEY: str = os.getenv('SUPABASE_API_KEY')
 supabase: Client = create_client(SUPABASE_PROJECT_URL, SUPABASE_API_KEY)
@@ -130,19 +132,40 @@ def ocr_route():
 
         # Get image URL from the request
         data = request.json
-        image_url = data.get('image_url')
+        try:
+            data = request.json
+            image = data.get('image')  # This should be your base64 string
 
-        if not image_url:
-            return jsonify({"error": "Image URL is required"}), 400
+            if not image:
+                return jsonify({"error": "Base64 image is required"}), 400
 
-        # Download the image from the URL
-        response = requests.get(image_url)
-        img = Image.open(BytesIO(response.content))
+            # Remove the prefix if present (like 'data:image/jpeg;base64,')
+            if image.startswith('data:image/jpeg;base64,'):
+                image = image.replace('data:image/jpeg;base64,', '')
+            elif image.startswith('data:image/png;base64,'):
+                image = image.replace('data:image/png;base64,', '')
+            image_data = base64.b64decode(image)
+            img = Image.open(BytesIO(image_data))
 
-        # Save the image in its original format
-        image_format = img.format.lower()
-        img_path = f"./temp_image.{image_format}"  # Save with the correct extension
-        img.save(img_path)
+            # Now you can continue processing the image
+            # Save the image in its original format (optional)
+            image_format = img.format.lower()
+            img_path = f"./temp_image.{image_format}"  # Save with the correct extension
+            img.save(img_path)
+        except Exception as e:
+            image_url = data.get('image_url')
+
+            if not image_url:
+                return jsonify({"error": "Image URL is required"}), 400
+
+            # Download the image from the URL
+            response = requests.get(image_url)
+            img = Image.open(BytesIO(response.content))
+
+            # Save the image in its original format
+            image_format = img.format.lower()
+            img_path = f"./temp_image.{image_format}"  # Save with the correct extension
+            img.save(img_path)
 
         # Perform OCR using PaddleOCR
         result = ocr.ocr(img_path, cls=True)
