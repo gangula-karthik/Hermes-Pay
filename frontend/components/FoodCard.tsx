@@ -53,7 +53,6 @@ const FoodCard: React.FC<FoodCardProps> = ({ foodItem, onSelect }) => {
             </div>
           </div>
 
-          {/* Selected status indicator */}
           <div className="self-end mt-2">
             <Chip
               color={isSelected ? "success" : "default"}
