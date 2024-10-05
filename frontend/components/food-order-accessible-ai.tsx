@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@nextui-org/button";
+import { useRouter } from "next/navigation"; // Import useRouter
 import {
   Dialog,
   DialogContent,
@@ -33,6 +34,8 @@ export function FoodOrderAccessibleAi({
   foodOrder,
   menu,
 }: FoodOrderAccessibleAiProps) {
+  const router = useRouter(); // Initialize the router
+
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [aiRecommendation, setAiRecommendation] = useState("");
@@ -56,11 +59,12 @@ export function FoodOrderAccessibleAi({
     setIsPayLoading(true); // Start loading for "Pay" buttons
 
     try {
-      const response = await fetch("https://4112-121-6-124-133.ngrok-free.app/recommendation", {
+      const response = await fetch("https://5bbc-121-6-124-133.ngrok-free.app/recommendation", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "*",
+          'ngrok-skip-browser-warning': '69420'
         },
         body: JSON.stringify({
           totalPrice: totalPrice,
@@ -97,6 +101,15 @@ export function FoodOrderAccessibleAi({
     speechSynthesis.speak(utterance);
   };
 
+  const handlePayment = () => {
+    setIsPayLoading(true); // Optional: Show loading state
+    setTimeout(() => {
+      window.alert("Your order has been placed successfully!"); // Show an alert
+
+      router.push("/dashboard/order"); // Redirect to /dashboard/order after the alert is dismissed
+    }, 1000); // Simulate API delay before showing the alert and redirect
+  };
+
   const OrderContent = () => (
     <>
       <div className="text-center mb-6">
@@ -130,10 +143,10 @@ export function FoodOrderAccessibleAi({
         </Button>
       </div>
       <div className="mt-6 grid grid-cols-2 gap-4">
-        <Button color="primary" isLoading={isPayLoading}>
+        <Button color="primary" isLoading={isPayLoading} onClick={handlePayment}>
           Pay Now 📱
         </Button>
-        <Button color="secondary" isLoading={isPayLoading}>
+        <Button color="secondary" isLoading={isPayLoading} onClick={handlePayment}>
           Cash Pay 💵
         </Button>
       </div>
@@ -142,7 +155,7 @@ export function FoodOrderAccessibleAi({
 
   const ViewOrderButton = () => (
     <Button variant="bordered" onClick={handleViewOrder} isLoading={isLoading}>
-        View Order
+      View Order
     </Button>
   );
 
