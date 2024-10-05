@@ -34,8 +34,8 @@ export function DocumentScannerCameraComponent({ onSuccess, setFoodItems }: { on
         image: capturedImage, // Send base64 image data
       });
       console.log(`Sending the following JSON to API: ${requestBody}`); // Log the JSON being sent to the API
-      // const response = await fetch(`https://b908-121-6-124-133.ngrok-free.app/ocr`, { // Use the BACKEND_HOST_URL from the .env file
-      const response = 
+      const response = await fetch(`https://b908-121-6-124-133.ngrok-free.app/ocr`, { // Use the BACKEND_HOST_URL from the .env file
+      // const response = 
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
